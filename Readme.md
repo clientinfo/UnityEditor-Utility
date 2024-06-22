@@ -1,6 +1,7 @@
-# Unity Editor Utils
+# Unity Editor Utility
 
-**Unity Editor Utils** is a powerful plugin designed to enhance your Unity Editor experience by addressing common annoyances and improving workflow efficiency. This project specifically targets issues related to the animation controller, making it easier to manage layers and set default properties.
+**Unity Editor Utility** is a powerful plugin designed to enhance your Unity Editor experience by addressing common annoyances and improving workflow efficiency. 
+This project specifically targets issues related to the animation controller, making it easier to manage layers and set default properties.
 
 ## Features
 
