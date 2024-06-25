@@ -5,8 +5,8 @@ This project specifically targets issues related to the animation controller, ma
 
 ## Features
 
-- **Fixes Animation Controller Layer List Jumping**: Prevents the layer list from jumping back to the top after adding a new layer to a animator controller, allowing for easier renaming and management of new layers.
-- **Fixes Parameter List Jumping**: Prevents the Parameterlist from jumping back to the top after adding a new Parameter to the animator controller, allowing for easier renaming and management of new Parameters.
+- **Fixes Animation Controller Layer Jumping**: Prevents the layer list from jumping back to the top after adding a new layer to a animator controller, allowing for easier renaming and management of new layers.
+- **Fixes Parameter Jumping**: Prevents the Parameterlist from jumping back to the top after adding a new Parameter to the animator controller, allowing for easier renaming and management of new Parameters.
 - **Set Default Weight**: Automatically sets the default weight of new layers in the animation controller to 1.0.
 
 ## Note
