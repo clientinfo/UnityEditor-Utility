@@ -51,7 +51,7 @@ namespace unity_editor_utils.Core.AssemblyUtils
 
             return layerControllerView;
         }
-
+        
         /// <summary>
         /// Retrieves the type for ParameterControllerView from the UnityEditor.Graphs assembly.
         /// </summary>
@@ -144,5 +144,8 @@ namespace unity_editor_utils.Core.AssemblyUtils
 
             return animatorControllerType;
         }
+
+        
+
     }
 }

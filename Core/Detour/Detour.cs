@@ -226,7 +226,7 @@ namespace unity_editor_utils.Core.Detour
                 _original = null;
             }
         }
-    
+
 
         /// <summary>
         /// Calls the original method temporarily by unhooking, invoking the method, and reapplying the hook.
@@ -234,7 +234,7 @@ namespace unity_editor_utils.Core.Detour
         /// <param name="this">The instance of the class containing the original method.</param>
         /// <param name="params">The parameters to pass to the original method.</param>
         /// <exception cref="InvalidOperationException">Thrown if the original method is not set.</exception>
-        public void CallOriginalFunction(object @this, object[] @params)
+        public T CallOriginalFunction<T>(object @this, params object[] @params)
         {
             if (OriginalMethod == null)
             {
@@ -244,7 +244,7 @@ namespace unity_editor_utils.Core.Detour
             Unhook();
             try
             {
-                OriginalMethod.Invoke(@this, @params);
+                return (T)OriginalMethod.Invoke(@this, @params);
             }
             finally
             {

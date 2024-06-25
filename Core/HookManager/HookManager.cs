@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using UnityEditor.Animations;
 using UnityEngine;
 
 namespace unity_editor_utils.Core.HookManager
@@ -10,40 +12,64 @@ namespace unity_editor_utils.Core.HookManager
     public static class HookManager
     {
         /// <summary>
-        /// Detour object for the get_defaultWeight hook.
+        /// Detour object for the AnimatorController::AddLayer (string) hook.
         /// </summary>
-        internal static Detour.Detour HkGetDefaultWeight;
+        internal static Detour.Detour HkAnimatorControllerAddLayerString;
 
         /// <summary>
-        /// Detour object for the ResetUI hook.
+        /// Detour object for the AnimatorController::AddLayer (ControllerLayer) hook.
+        /// </summary>
+        internal static Detour.Detour HkAnimatorControllerAddLayerControllerLayer;
+
+        /// <summary>
+        /// Detour object for the LayerControllerView::ResetUi hook.
         /// </summary>
         internal static Detour.Detour HkLayerControllerViewResetUi;
 
+        /// <summary>
+        /// Detour object for the ParameterControllerView::ResetUi hook.
+        /// </summary>
         internal static Detour.Detour HkParameterControllerViewResetUi;
-
 
         /// <summary>
         /// Initializes the hooks for the Unity Methods
         /// </summary>
         public static void InitHooks()
         {
-            HkGetDefaultWeight = InitHook(
-                AssemblyUtils.AssemblyUtils.GetAnimatorControllerLayerType(),
-                "defaultWeight",
+           
+            HkAnimatorControllerAddLayerString = InitHook(
+                AssemblyUtils.AssemblyUtils.GetAnimatorControllerType(),
+                "AddLayer",
                 typeof(HookMethods.HookMethods),
-                nameof(HookMethods.HookMethods.HkGetDefaultWeight)
+                nameof(HookMethods.HookMethods.HkAddLayerString),
+                isStatic: false,
+                parameterTypes: new Type[] { typeof(string) }
             );
 
-            if (HkGetDefaultWeight == null)
+            if (HkAnimatorControllerAddLayerString == null)
             {
-                Debug.LogError("Failed to initialize HkGetDefaultWeight hook.");
+                Debug.LogError("Failed to initialize HkAnimatorControllerAddLayerString hook.");
+            }
+
+            HkAnimatorControllerAddLayerControllerLayer = InitHook(
+                AssemblyUtils.AssemblyUtils.GetAnimatorControllerType(),
+                "AddLayer",
+                typeof(HookMethods.HookMethods),
+                nameof(HookMethods.HookMethods.HkAddLayerAnimatorControllerLayer),
+                isStatic: false,
+                parameterTypes: new Type[] { typeof(AnimatorControllerLayer) }
+            );
+
+            if (HkAnimatorControllerAddLayerControllerLayer == null)
+            {
+                Debug.LogError("Failed to initialize HkAnimatorControllerAddLayerControllerLayer hook.");
             }
 
             HkLayerControllerViewResetUi = InitHook(
                 AssemblyUtils.AssemblyUtils.GetLayerControllerViewType(),
                 "ResetUI",
                 typeof(HookMethods.HookMethods),
-                nameof(HookMethods.HookMethods.Hk_LayerControllerView_ResetUi),
+                nameof(HookMethods.HookMethods.HkLayerControllerViewResetUi),
                 isStatic: false
             );
 
@@ -56,7 +82,7 @@ namespace unity_editor_utils.Core.HookManager
                 AssemblyUtils.AssemblyUtils.GetParameterControllerViewType(),
                 "ResetUI",
                 typeof(HookMethods.HookMethods),
-                nameof(HookMethods.HookMethods.Hk_ParameterControllerView_ResetUi),
+                nameof(HookMethods.HookMethods.HkParameterControllerViewResetUi),
                 isStatic: false
                 );
 
@@ -64,6 +90,7 @@ namespace unity_editor_utils.Core.HookManager
             {
                 Debug.LogError("Failed to initialize HkParameterControllerViewResetUi hook.");
             }
+
         }
 
         /// <summary>
@@ -74,8 +101,9 @@ namespace unity_editor_utils.Core.HookManager
         /// <param name="hookType">The type containing the hook method.</param>
         /// <param name="hookMethodName">The name of the hook method.</param>
         /// <param name="isStatic">Indicates whether the method to hook is static. Default is true.</param>
+        /// <param name="parameterTypes">The types of the parameters for the method to hook. Default is null.</param>
         /// <returns>A Detour object representing the hook, or null if the hook could not be created.</returns>
-        private static Detour.Detour InitHook(Type targetType, string methodName, Type hookType, string hookMethodName, bool isStatic = true)
+        private static Detour.Detour InitHook(Type targetType, string methodName, Type hookType, string hookMethodName, bool isStatic = true, Type[] parameterTypes = null)
         {
             if (targetType == null)
             {
@@ -83,7 +111,9 @@ namespace unity_editor_utils.Core.HookManager
                 return null;
             }
 
-            var originalMethod = isStatic ? targetType.GetProperty(methodName)?.GetGetMethod(true) : targetType.GetMethod(methodName, BindingFlags.Instance | BindingFlags.Public);
+            var originalMethod = isStatic
+                ? targetType.GetMethod(methodName, BindingFlags.Static | BindingFlags.Public, null, parameterTypes, null)
+                : targetType.GetMethod(methodName, BindingFlags.Instance | BindingFlags.Public, null, parameterTypes, null);
 
             if (originalMethod == null)
             {

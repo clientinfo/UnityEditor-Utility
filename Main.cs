@@ -13,7 +13,6 @@ namespace unity_editor_utils
         static Main()
         {
             HookManager.InitHooks();
-            Debug.Log("Unity Hooks Applied :) ~clientinfo");
         }
     }
 }
