@@ -1,8 +1,6 @@
 ﻿using System.Reflection;
 using UnityEditorInternal;
 using UnityEngine;
-using UnityEditor.Animations;
-using System;
 using AnimatorController = UnityEditor.Animations.AnimatorController;
 using AnimatorControllerLayer = UnityEditor.Animations.AnimatorControllerLayer;
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using UnityEditor.Animations;
 using UnityEngine;
 
@@ -111,9 +110,19 @@ namespace unity_editor_utils.Core.HookManager
                 return null;
             }
 
-            var originalMethod = isStatic
-                ? targetType.GetMethod(methodName, BindingFlags.Static | BindingFlags.Public, null, parameterTypes, null)
-                : targetType.GetMethod(methodName, BindingFlags.Instance | BindingFlags.Public, null, parameterTypes, null);
+            MethodInfo originalMethod;
+            if (parameterTypes == null)
+            {
+                originalMethod = isStatic
+                    ? targetType.GetMethod(methodName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+                    : targetType.GetMethod(methodName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            }
+            else
+            {
+                originalMethod = isStatic
+                    ? targetType.GetMethod(methodName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic, null, parameterTypes, null)
+                    : targetType.GetMethod(methodName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, parameterTypes, null);
+            }
 
             if (originalMethod == null)
             {
@@ -121,12 +130,13 @@ namespace unity_editor_utils.Core.HookManager
                 return null;
             }
 
-            var hookMethod = hookType.GetMethod(hookMethodName, BindingFlags.Static | BindingFlags.Public);
+            var hookMethod = hookType.GetMethod(hookMethodName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
 
             var detour = new Detour.Detour(originalMethod, hookMethod);
             detour.ApplyHook();
 
             return detour;
         }
+
     }
 }

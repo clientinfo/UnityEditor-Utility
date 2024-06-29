@@ -144,8 +144,5 @@ namespace unity_editor_utils.Core.AssemblyUtils
 
             return animatorControllerType;
         }
-
-        
-
     }
 }
